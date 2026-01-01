@@ -1,10 +1,25 @@
 import ast
 import uuid
+import builtins
+import keyword
+
+
+BUILTIN_NAMES = set(dir(builtins))
+KEYWORDS = set(keyword.kwlist)
 
 
 class IdentifierRenamer(ast.NodeTransformer):
     def __init__(self):
         self.mapping = {}
+
+    def _should_rename(self, name):
+        if name in BUILTIN_NAMES:
+            return False
+        if name in KEYWORDS:
+            return False
+        if name.startswith("__") and name.endswith("__"):
+            return False
+        return True
 
     def _new_name(self, original):
         if original not in self.mapping:
@@ -12,13 +27,18 @@ class IdentifierRenamer(ast.NodeTransformer):
         return self.mapping[original]
 
     def visit_FunctionDef(self, node):
-        node.name = self._new_name(node.name)
+        if self._should_rename(node.name):
+            node.name = self._new_name(node.name)
         self.generic_visit(node)
         return node
 
     def visit_Name(self, node):
-        if isinstance(node.ctx, ast.Store) or isinstance(node.ctx, ast.Load):
+        if not self._should_rename(node.id):
+            return node
+
+        if isinstance(node.ctx, (ast.Store, ast.Load)):
             node.id = self._new_name(node.id)
+
         return node
 
 
