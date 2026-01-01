@@ -1,5 +1,8 @@
+from passes.rename_identifiers import obfuscate_code
 from pathlib import Path
 import shutil
+
+from passes.rename_identifiers import obfuscate_code
 
 
 def run(input_path, output_path, level):
@@ -14,9 +17,14 @@ def run(input_path, output_path, level):
 
     shutil.copytree(input_dir, output_dir)
 
+    for py_file in output_dir.rglob("*.py"):
+        source = py_file.read_text(encoding="utf-8")
+        obfuscated = obfuscate_code(source)
+        py_file.write_text(obfuscated, encoding="utf-8")
+
     return {
         "input": str(input_dir),
         "output": str(output_dir),
         "level": level,
-        "status": "copied"
+        "status": "obfuscated"
     }
