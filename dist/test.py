@@ -1,4 +1,4 @@
-def v_bf9ef113(name):
-    v_328ca3f2 = 'hello'
-    print(v_328ca3f2, v_014ea27c)
-v_bf9ef113('world')
+def v_c9fca2a7(name):
+    v_99d7ca7d = 'hello'
+    print(v_99d7ca7d, v_d28762ec)
+v_c9fca2a7('world')

@@ -10,7 +10,7 @@ from engine.core import run
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Universal Obfuscation Tool - Ready to use obfuscator"
+        description="Universal Obfuscation Tool"
     )
 
     parser.add_argument(
@@ -31,8 +31,12 @@ def parse_args():
         help="Obfuscation level"
     )
 
-    return parser.parse_args()
+    parser.add_argument(
+        "--config",
+        help="Path to config file"
+    )
 
+    return parser.parse_args()
 
 def main():
     args = parse_args()
