@@ -5,7 +5,7 @@ import shutil
 from passes.rename_identifiers import obfuscate_code
 
 
-def run(input_path, output_path, level):
+def run(input_path, output_path, config, level):
     input_dir = Path(input_path)
     output_dir = Path(output_path)
 
@@ -22,9 +22,12 @@ def run(input_path, output_path, level):
         obfuscated = obfuscate_code(source)
         py_file.write_text(obfuscated, encoding="utf-8")
 
+    level = config.get("level", "medium")
+
     return {
         "input": str(input_dir),
         "output": str(output_dir),
         "level": level,
         "status": "obfuscated"
-    }
+}
+
