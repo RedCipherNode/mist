@@ -1,20 +1,20 @@
-from mist.core.context import Context
-from mist.core.pipeline import Pipeline
-from mist.passes.dummy import DummyPass
+from mist.adapters.python.adapter import PythonAdapter
 
 
 def main() -> None:
-    context = Context()
+    adapter = PythonAdapter()
 
-    pipeline = Pipeline()
-    pipeline.add(DummyPass())
+    source = """
+name = "MIST"
 
-    tree = object()
+print(f"Hello, {name}")
+"""
 
-    pipeline.run(tree, context)
+    tree = adapter.parse(source)
 
-    for diagnostic in context.diagnostics.items:
-        print(f"[{diagnostic.severity.name}] {diagnostic.message}")
+    output = adapter.emit(tree)
+
+    print(output)
 
 
 if __name__ == "__main__":
