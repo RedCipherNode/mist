@@ -334,11 +334,25 @@ class ExpressionGenerator:
     ) -> ast.expr:
 
         strategies = [
-            self._xor,
-            self._shift,
+            self._bitwise,
         ]
 
         strategy = secrets.choice(strategies)
+
+        return strategy(value)
+
+    def _bitwise(
+        self,
+        value: int,
+    ) -> ast.expr:
+
+        strategy = secrets.choice(
+            [
+                self._xor,
+                self._shift,
+                self._or,
+            ]
+        )
 
         return strategy(value)
 
@@ -385,6 +399,40 @@ class ExpressionGenerator:
             op=ast.LShift(),
             right=ast.Constant(shift),
         )
+
+    def _or(
+        self,
+        value: int,
+    ) -> ast.expr:
+
+        if value <= 2:
+            return ast.Constant(value=value)
+
+        while True:
+            left = 0
+            right = 0
+
+            bit = 1
+            temp = value
+
+            while temp:
+                if temp & 1:
+                    if secrets.randbits(1):
+                        left |= bit
+                    else:
+                        right |= bit
+
+                bit <<= 1
+                temp >>= 1
+
+            if left == 0 or right == 0:
+                continue
+
+            return ast.BinOp(
+                left=ast.Constant(left),
+                op=ast.BitOr(),
+                right=ast.Constant(right),
+            )
 
 
 class ConstantTransformer(ast.NodeTransformer):
