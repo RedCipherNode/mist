@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from mist.model.reference import Reference
+    from mist.model.scope import Scope
 
 
 class SymbolKind(Enum):
@@ -25,4 +29,6 @@ class Symbol:
     obfuscated_name: str | None = None
 
     node: Any | None = None
-    scope: Any | None = None
+    scope: Scope | None = None
+
+    references: list["Reference"] = field(default_factory=list)

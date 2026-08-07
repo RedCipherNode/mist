@@ -9,4 +9,7 @@ from mist.model.symbol import Symbol
 @dataclass(slots=True)
 class Reference:
     symbol: Symbol
+
     node: Any
+
+    is_definition: bool
