@@ -333,20 +333,31 @@ class ExpressionGenerator:
         value: int,
     ) -> ast.expr:
 
-        # biarin angka kecil dulu
+        strategies = [
+            self._xor,
+            self._shift,
+        ]
+
+        strategy = secrets.choice(strategies)
+
+        return strategy(value)
+
+    def _xor(
+        self,
+        value: int,
+    ) -> ast.expr:
+
         if value <= 2:
             return ast.Constant(value=value)
 
         while True:
             left = secrets.randbits(16)
 
-            # hindari hasil yang terlalu mirip
             if abs(left - value) < 32:
                 continue
 
             right = left ^ value
 
-            # jangan sampai ada operand kecil
             if right <= 2:
                 continue
 
@@ -355,6 +366,25 @@ class ExpressionGenerator:
                 op=ast.BitXor(),
                 right=ast.Constant(right),
             )
+
+    def _shift(
+        self,
+        value: int,
+    ) -> ast.expr:
+
+        if value <= 2:
+            return ast.Constant(value=value)
+
+        if value & 1:
+            return ast.Constant(value=value)
+
+        shift = 1
+
+        return ast.BinOp(
+            left=ast.Constant(value >> shift),
+            op=ast.LShift(),
+            right=ast.Constant(shift),
+        )
 
 
 class ConstantTransformer(ast.NodeTransformer):

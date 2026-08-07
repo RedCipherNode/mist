@@ -1,12 +1,12 @@
-def _vFOF7em803Ef(_JkpdycanqJmZ, _QYL9PGE7ZPQW):
-    return _JkpdycanqJmZ + _QYL9PGE7ZPQW
+def _3WcP3h4VZYci(_gpLkJE5zUvLU, _thJ9LdwLxrop):
+    return _gpLkJE5zUvLU + _thJ9LdwLxrop
 
-def _cUYyLFnNcZGO(_JkpdycanqJmZ, _QYL9PGE7ZPQW):
-    return _JkpdycanqJmZ * _QYL9PGE7ZPQW
+def _yUPBoXLTjNE9(_gpLkJE5zUvLU, _thJ9LdwLxrop):
+    return _gpLkJE5zUvLU * _thJ9LdwLxrop
 
-def _KtQiDtmbNkiZ(_O2kUGw1qPQ0t, _ElilA63rXpwJ):
-    _F2rrcs9BwmVT = _vFOF7em803Ef(_O2kUGw1qPQ0t, _ElilA63rXpwJ)
-    if _F2rrcs9BwmVT > 21144 ^ 21138:
-        return _cUYyLFnNcZGO(_F2rrcs9BwmVT, 2)
-    return _F2rrcs9BwmVT
-print(_KtQiDtmbNkiZ(2909 ^ 2910, 33480 ^ 33473))
+def _Yc96KLGH2QVe(_49LXf6H0P9kU, _CRsSa3lvfwqv):
+    _tOgQv30YavKT = _3WcP3h4VZYci(_49LXf6H0P9kU, _CRsSa3lvfwqv)
+    if _tOgQv30YavKT > 5 << 1:
+        return _yUPBoXLTjNE9(_tOgQv30YavKT, 2)
+    return _tOgQv30YavKT
+print(_Yc96KLGH2QVe(62523 ^ 62520, 5604 ^ 5613))
