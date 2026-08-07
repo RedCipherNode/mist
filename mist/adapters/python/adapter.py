@@ -6,7 +6,6 @@ from mist.model import Reference
 from mist.model import Symbol
 from mist.model import SymbolKind
 
-import numpy as np
 
 # >>>>>----------------------------------------------<<<<<#
 # Python Adapter
@@ -155,6 +154,49 @@ class SymbolCollector(ast.NodeVisitor):
                 node.target,
             )
         self.generic_visit(node)
+
+    def visit_alias(
+        self,
+        node: ast.alias,
+    ):
+        if node.asname is None:
+            return
+
+        self._create(
+            SymbolKind.VARIABLE,
+            node.asname,
+            node,
+        )
+
+    def visit_ExceptHandler(
+        self,
+        node: ast.ExceptHandler,
+    ):
+        if node.name is not None:
+            new_name = self.map.get(node.name)
+
+            if new_name is not None:
+                node.name = new_name
+
+        self.generic_visit(node)
+
+        return node
+
+    def visit_Global(
+        self,
+        node: ast.Global,
+    ):
+        node.names = [self.map.get(name, name) for name in node.names]
+
+        return node
+
+    def visit_Nonlocal(
+        self,
+        node: ast.Nonlocal,
+    ):
+        node.names = [self.map.get(name, name) for name in node.names]
+
+        return node
 
 
 # >>>>>----------------------------------------------<<<<<#

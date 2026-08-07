@@ -1,2 +1,2 @@
-_Uz2lLtiJq8Kq = 'MIST'
-print(f'Hello, {_Uz2lLtiJq8Kq}')
+_RarQ3rrtjLbn = 'MIST'
+print(f'Hello, {_RarQ3rrtjLbn}')
