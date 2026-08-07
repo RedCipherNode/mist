@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from mist.model.symbol import Symbol
+
 
 @dataclass(slots=True)
 class Scope:
-    id: int
+    name: str
 
     parent: "Scope | None" = None
 
-    children: list["Scope"] = field(default_factory=list)
-
-    symbols: list = field(default_factory=list)
+    symbols: dict[str, Symbol] = field(default_factory=dict)

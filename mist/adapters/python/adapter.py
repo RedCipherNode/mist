@@ -6,6 +6,12 @@ from mist.model import Reference
 from mist.model import Symbol
 from mist.model import SymbolKind
 
+import numpy as np
+
+# >>>>>----------------------------------------------<<<<<#
+# Python Adapter
+# >>>>>----------------------------------------------<<<<<#
+
 
 class PythonAdapter:
     def parse(self, source: str) -> ast.AST:
@@ -33,6 +39,11 @@ class PythonAdapter:
 
     def emit(self, tree: ast.AST) -> str:
         return ast.unparse(tree)
+
+
+# >>>>>----------------------------------------------<<<<<#
+# Symbol Collection
+# >>>>>----------------------------------------------<<<<<#
 
 
 class SymbolCollector(ast.NodeVisitor):
@@ -65,7 +76,6 @@ class SymbolCollector(ast.NodeVisitor):
         return symbol
 
     def visit_FunctionDef(self, node: ast.FunctionDef):
-
         self._create(
             SymbolKind.FUNCTION,
             node.name,
@@ -75,7 +85,6 @@ class SymbolCollector(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_ClassDef(self, node: ast.ClassDef):
-
         self._create(
             SymbolKind.CLASS,
             node.name,
@@ -85,7 +94,6 @@ class SymbolCollector(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_arg(self, node: ast.arg):
-
         self._create(
             SymbolKind.PARAMETER,
             node.arg,
@@ -93,15 +101,65 @@ class SymbolCollector(ast.NodeVisitor):
         )
 
     def visit_Name(self, node: ast.Name):
-
         if isinstance(node.ctx, ast.Store):
             self._create(
                 SymbolKind.VARIABLE,
                 node.id,
                 node,
             )
-
         self.generic_visit(node)
+
+    def visit_AsyncFunctionDef(
+        self,
+        node: ast.AsyncFunctionDef,
+    ):
+        self._create(
+            SymbolKind.FUNCTION,
+            node.name,
+            node,
+        )
+        self.generic_visit(node)
+
+    def visit_withitem(
+        self,
+        node: ast.withitem,
+    ):
+        if isinstance(node.optional_vars, ast.Name):
+            self._create(
+                SymbolKind.VARIABLE,
+                node.optional_vars.id,
+                node.optional_vars,
+            )
+        self.generic_visit(node)
+
+    def visit_For(
+        self,
+        node: ast.For,
+    ):
+        if isinstance(node.target, ast.Name):
+            self._create(
+                SymbolKind.VARIABLE,
+                node.target.id,
+                node.target,
+            )
+        self.generic_visit(node)
+
+    def visit_comprehension(
+        self,
+        node: ast.comprehension,
+    ):
+        if isinstance(node.target, ast.Name):
+            self._create(
+                SymbolKind.VARIABLE,
+                node.target.id,
+                node.target,
+            )
+        self.generic_visit(node)
+
+
+# >>>>>----------------------------------------------<<<<<#
+# Reference Collection
+# >>>>>----------------------------------------------<<<<<#
 
 
 class ReferenceCollector(ast.NodeVisitor):
@@ -129,6 +187,11 @@ class ReferenceCollector(ast.NodeVisitor):
             )
 
         self.generic_visit(node)
+
+
+# >>>>>----------------------------------------------<<<<<#
+# AST Rewrite
+# >>>>>----------------------------------------------<<<<<#s
 
 
 class RenameTransformer(ast.NodeTransformer):
@@ -179,3 +242,37 @@ class RenameTransformer(ast.NodeTransformer):
         self.generic_visit(node)
 
         return node
+
+    def visit_AsyncFunctionDef(
+        self,
+        node: ast.AsyncFunctionDef,
+    ):
+
+        new_name = self.map.get(node.name)
+
+        if new_name is not None:
+            node.name = new_name
+
+        self.generic_visit(node)
+
+        return node
+
+    def visit_alias(
+        self,
+        node: ast.alias,
+    ):
+
+        if node.asname is None:
+            return node
+
+        new_name = self.map.get(node.asname)
+
+        if new_name is not None:
+            node.asname = new_name
+
+        return node
+
+
+# >>>>>----------------------------------------------<<<<<#
+# Scope Collection
+# >>>>>----------------------------------------------<<<<<#
