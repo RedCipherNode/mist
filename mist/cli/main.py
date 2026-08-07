@@ -30,11 +30,6 @@ def main() -> None:
     # Emit source code
     output = adapter.emit(tree)
 
-    # Debug
-    print("=" * 35)
-    print(output)
-    print("=" * 35)
-
     # Write file
     Path("sandbox_obf.py").write_text(
         output,

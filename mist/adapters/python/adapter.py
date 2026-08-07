@@ -351,6 +351,7 @@ class ExpressionGenerator:
                 self._xor,
                 self._shift,
                 self._or,
+                self._and,
             ]
         )
 
@@ -431,6 +432,45 @@ class ExpressionGenerator:
             return ast.BinOp(
                 left=ast.Constant(left),
                 op=ast.BitOr(),
+                right=ast.Constant(right),
+            )
+
+    def _and(
+        self,
+        value: int,
+    ) -> ast.expr:
+
+        if value <= 2:
+            return ast.Constant(value=value)
+
+        while True:
+            left = value
+            right = value
+
+            highest = max(value.bit_length(), 1)
+
+            for i in range(highest):
+                bit = 1 << i
+
+                if value & bit:
+                    continue
+
+                match secrets.randbelow(3):
+                    case 0:
+                        left |= bit
+
+                    case 1:
+                        right |= bit
+
+                    case _:
+                        pass
+
+            if left == value or right == value:
+                continue
+
+            return ast.BinOp(
+                left=ast.Constant(left),
+                op=ast.BitAnd(),
                 right=ast.Constant(right),
             )
 
