@@ -1,7 +1,0 @@
-{
-  "level": "medium",
-  "passes": {
-    "rename_identifiers": true,
-    "string_obfuscation": true
-  }
-}
