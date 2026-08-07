@@ -1,30 +1,22 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from pathlib import Path
 from typing import Any
+
+from mist.model import Symbol
 
 
 class Adapter(ABC):
-    """Base contract for language adapters."""
-
-    @property
-    @abstractmethod
-    def language(self) -> str:
-        """Language identifier."""
-        ...
+    """Language adapter."""
 
     @abstractmethod
-    def supports(self, path: Path) -> bool:
-        """Return True if this adapter supports the given path."""
-        ...
+    def parse(self, source: str) -> Any: ...
 
     @abstractmethod
-    def parse(self, source: str) -> Any:
-        """Parse source code into an internal representation."""
-        ...
+    def collect_symbols(self, tree: Any) -> list[Symbol]: ...
 
     @abstractmethod
-    def emit(self, tree: Any) -> str:
-        """Convert an internal representation back into source code."""
-        ...
+    def rewrite(self, tree: Any, symbols: list[Symbol]) -> Any: ...
+
+    @abstractmethod
+    def emit(self, tree: Any) -> str: ...

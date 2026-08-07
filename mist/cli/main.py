@@ -2,7 +2,6 @@ from mist.adapters.python.adapter import PythonAdapter
 
 
 def main() -> None:
-    adapter = PythonAdapter()
 
     source = """
 name = "MIST"
@@ -10,11 +9,18 @@ name = "MIST"
 print(f"Hello, {name}")
 """
 
+    adapter = PythonAdapter()
+
     tree = adapter.parse(source)
 
-    output = adapter.emit(tree)
+    symbols = adapter.collect_symbols(tree)
 
-    print(output)
+    for symbol in symbols:
+        print(
+            symbol.id,
+            symbol.kind.name,
+            symbol.original_name,
+        )
 
 
 if __name__ == "__main__":
