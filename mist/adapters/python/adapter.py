@@ -32,9 +32,12 @@ class PythonAdapter:
         symbols: list[Symbol],
     ) -> ast.AST:
 
-        transformer = RenameTransformer(symbols)
+        tree = RenameTransformer(symbols).visit(tree)
+        tree = ConstantTransformer().visit(tree)
 
-        return transformer.visit(tree)
+        ast.fix_missing_locations(tree)
+
+        return tree
 
     def emit(self, tree: ast.AST) -> str:
         return ast.unparse(tree)
@@ -168,36 +171,6 @@ class SymbolCollector(ast.NodeVisitor):
             node,
         )
 
-    def visit_ExceptHandler(
-        self,
-        node: ast.ExceptHandler,
-    ):
-        if node.name is not None:
-            new_name = self.map.get(node.name)
-
-            if new_name is not None:
-                node.name = new_name
-
-        self.generic_visit(node)
-
-        return node
-
-    def visit_Global(
-        self,
-        node: ast.Global,
-    ):
-        node.names = [self.map.get(name, name) for name in node.names]
-
-        return node
-
-    def visit_Nonlocal(
-        self,
-        node: ast.Nonlocal,
-    ):
-        node.names = [self.map.get(name, name) for name in node.names]
-
-        return node
-
 
 # >>>>>----------------------------------------------<<<<<#
 # Reference Collection
@@ -314,7 +287,86 @@ class RenameTransformer(ast.NodeTransformer):
 
         return node
 
+    def visit_ExceptHandler(
+        self,
+        node: ast.ExceptHandler,
+    ):
+        if node.name is not None:
+            new_name = self.map.get(node.name)
+
+            if new_name is not None:
+                node.name = new_name
+
+        self.generic_visit(node)
+
+        return node
+
+    def visit_Global(
+        self,
+        node: ast.Global,
+    ):
+        node.names = [self.map.get(name, name) for name in node.names]
+
+        return node
+
+    def visit_Nonlocal(
+        self,
+        node: ast.Nonlocal,
+    ):
+        node.names = [self.map.get(name, name) for name in node.names]
+
+        return node
+
 
 # >>>>>----------------------------------------------<<<<<#
-# Scope Collection
+# Expression Generator
 # >>>>>----------------------------------------------<<<<<#
+
+
+import ast
+import secrets
+
+
+class ExpressionGenerator:
+    def integer(
+        self,
+        value: int,
+    ) -> ast.expr:
+
+        # biarin angka kecil dulu
+        if value <= 2:
+            return ast.Constant(value=value)
+
+        while True:
+            left = secrets.randbits(16)
+
+            # hindari hasil yang terlalu mirip
+            if abs(left - value) < 32:
+                continue
+
+            right = left ^ value
+
+            # jangan sampai ada operand kecil
+            if right <= 2:
+                continue
+
+            return ast.BinOp(
+                left=ast.Constant(left),
+                op=ast.BitXor(),
+                right=ast.Constant(right),
+            )
+
+
+class ConstantTransformer(ast.NodeTransformer):
+    def __init__(self):
+        self.generator = ExpressionGenerator()
+
+    def visit_Constant(
+        self,
+        node: ast.Constant,
+    ):
+
+        if not isinstance(node.value, int):
+            return node
+
+        return self.generator.integer(node.value)

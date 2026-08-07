@@ -6,7 +6,7 @@ from mist.passes.rename import RenamePass
 
 def main() -> None:
 
-    source = Path("hello.py").read_text(
+    source = Path("sandbox.py").read_text(
         encoding="utf-8",
     )
 
@@ -36,7 +36,7 @@ def main() -> None:
     print("=" * 35)
 
     # Write file
-    Path("hello_obf.py").write_text(
+    Path("sandbox_obf.py").write_text(
         output,
         encoding="utf-8",
     )
