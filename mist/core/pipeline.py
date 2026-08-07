@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from typing import Any
 
-from .pass import Pass
+from mist.core.pass import Pass
 
 
 class Pipeline:
@@ -19,8 +20,12 @@ class Pipeline:
         """Register multiple transformation passes."""
         self._passes.extend(transforms)
 
-    def run(self, tree, context):
-        """Execute all registered passes."""
+    def clear(self) -> None:
+        """Remove all registered passes."""
+        self._passes.clear()
+
+    def run(self, tree: Any, context: Any) -> Any:
+        """Execute every registered pass."""
 
         current = tree
 
@@ -31,5 +36,5 @@ class Pipeline:
 
     @property
     def passes(self) -> tuple[Pass, ...]:
-        """Read-only registered passes."""
+        """Registered passes (read-only)."""
         return tuple(self._passes)

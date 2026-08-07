@@ -4,16 +4,15 @@ version = "0.1.0"
 description = "A modular source-to-source code obfuscator."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
 
 authors = [
-    { name = "Your Name" }
+    { name = "Ananda Rizky" }
 ]
 
 dependencies = []
 
 [project.scripts]
-mist = "cli.main:main"
+mist = "mist.cli.main:main"
 
 [build-system]
 requires = ["setuptools>=68"]

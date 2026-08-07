@@ -12,3 +12,9 @@ build/
 .vscode/
 .DS_Store
 Thumbs.db
+*.log
+.coverage
+htmlcov/
+.env
+.env.*
+.pyre/

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .diagnostics import Diagnostics
+from mist.core.diagnostics import Diagnostics
 
 
 @dataclass(slots=True)
 class Context:
-    """Shared runtime state during a transformation pipeline."""
+    """Shared execution context for a transformation pipeline."""
 
     diagnostics: Diagnostics = field(default_factory=Diagnostics)

@@ -17,8 +17,6 @@ class Diagnostic:
 
 
 class Diagnostics:
-    """Collects diagnostics during a transformation."""
-
     def __init__(self) -> None:
         self._items: list[Diagnostic] = []
 
@@ -34,14 +32,6 @@ class Diagnostics:
     @property
     def items(self) -> tuple[Diagnostic, ...]:
         return tuple(self._items)
-
-    @property
-    def has_errors(self) -> bool:
-        return any(item.severity is Severity.ERROR for item in self._items)
-
-    @property
-    def has_warnings(self) -> bool:
-        return any(item.severity is Severity.WARNING for item in self._items)
 
     def clear(self) -> None:
         self._items.clear()

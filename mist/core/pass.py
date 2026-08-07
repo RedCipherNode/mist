@@ -4,14 +4,14 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 
-class BasePass(ABC):
-    """Base class for every transformation pass."""
+class Pass(ABC):
+    """Base contract for every transformation pass."""
 
     @property
     @abstractmethod
     def name(self) -> str:
-        """Human-readable pass name."""
-        raise NotImplementedError
+        """Return the pass name."""
+        ...
 
     @abstractmethod
     def run(self, tree: Any, context: Any) -> Any:
@@ -21,13 +21,13 @@ class BasePass(ABC):
         Parameters
         ----------
         tree:
-            Language-specific syntax tree.
+            Transformation target.
 
         context:
-            Shared runtime context.
+            Shared execution context.
 
         Returns
         -------
         The transformed tree.
         """
-        raise NotImplementedError
+        ...
